@@ -1,12 +1,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
-function Today({ day }) {
-    return <div>Today is {day.toString()}</div>;
+function Today({ day, onNext }) {
+    return <div>Today is {day.toString()} 
+		<button type="button" onClick={onNext}>Next</button></div>;
 }
 
-ReactDOM.render(<Today day={new Date(2018,2,20)} />, document.getElementById('root'));
+let day = new Date(2018,2,20);
+
+function onNext() {
+    day = new Date(day.getTime() + (24*3600*1000));
+    render();
+}
+
+function render() {
+    ReactDOM.render(<Today day={day} onNext={onNext} />, document.getElementById('root'));
+}
+render();
+
+
 registerServiceWorker();
