@@ -2,16 +2,24 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import registerServiceWorker from './registerServiceWorker';
-import {createStore} from 'redux';
+import { createStore } from 'redux';
+import { connect, Provider } from 'react-redux';
 
 function Today({ day, onNext }) {
     return <div>Today is {day.toString()} 
         <button type="button" onClick={onNext}>Next</button></div>;
 }
 
-function onNext() {
-    store.dispatch({type: "NEXT_DAY"});
-}
+const ConnectedToday = connect(
+    function mapStateToProps(state) {
+        return state;
+    }, 
+    function mapDispatchToProps(dispatch) {
+        return {
+            onNext: ()=> { dispatch({type: "NEXT_DAY"}); }
+        };
+    }
+    )(Today);
 
 function reducer(state = { day: new Date(2018,2,20) }, action) {
     switch (action.type) {
@@ -23,10 +31,11 @@ function reducer(state = { day: new Date(2018,2,20) }, action) {
 }
 const store = createStore(reducer);
 
-store.subscribe(() => {
-    ReactDOM.render(<Today day={store.getState().day} onNext={onNext} />, 
-        document.getElementById('root'));
-});
+ReactDOM.render(
+    <Provider store={store}>
+        <ConnectedToday />
+    </Provider>, 
+    document.getElementById('root'));
 
 store.dispatch({type: "START"});
 
